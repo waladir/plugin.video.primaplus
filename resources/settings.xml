@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<category label="Nastavení">
+                <setting label="Email" type="text" id="email" default=""/>
+                <setting label="Heslo" type="text" id="password" option="hidden" enable="!eq(-1,false)" default=""/>
+                <setting label="DeviceId" type="text" id="deviceid" default="" enable="false"/>
+                <setting label="Nová session" type="action" action="RunPlugin(plugin://plugin.video.primaplus?action=reset_session)"/>    
+	</category>
+</settings>

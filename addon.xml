@@ -1,0 +1,34 @@
+﻿<addon id="plugin.video.primaplus" name="Prima+" provider-name="waladir" version="1.1.1">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+    <import addon="script.module.requests" version="2.18.4"/>
+    <import addon="script.module.beautifulsoup4" version="4.6.0"/>
+  </requires>
+  <extension library="main.py" point="xbmc.python.pluginsource">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="cs_CZ">Prima+</summary>
+    <description lang="cs_CZ">
+Doplněk pro Prima+
+Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.
+Další informace a podporu najdete na fóru www.xbmc-kodi.cz (https://www.xbmc-kodi.cz/prispevek-prima)
+    </description>    
+    <platform>all</platform>
+    <news>
+v1.1.1 (15.5.2023)
+- oprava načtení profilu
+- nabídky podle tarifu
+    
+v1.1.0 (14.5.2023)
+- podpora pro Kodi 18
+- oprava chyb
+
+v1.0.0 (13.5.2023)
+- první verze
+    </news>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
