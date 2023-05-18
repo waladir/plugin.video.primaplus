@@ -4,6 +4,7 @@
                 <setting label="Email" type="text" id="email" default=""/>
                 <setting label="Heslo" type="text" id="password" option="hidden" enable="!eq(-1,false)" default=""/>
                 <setting label="DeviceId" type="text" id="deviceid" default="" enable="false"/>
+                <setting label="Typ streamu" type="select" id="stream_type" values="DASH|HLS" default="DASH"/>
                 <setting label="Nová session" type="action" action="RunPlugin(plugin://plugin.video.primaplus?action=reset_session)"/>    
 	</category>
 </settings>
