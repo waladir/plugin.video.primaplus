@@ -39,23 +39,27 @@ if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
 
 def play_stream(playId):
+    addon = xbmcaddon.Addon()
     data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/products/id-' + playId + '/play', data = None, token = get_token())
     if 'streamInfos' not in data or len(data['streamInfos']) < 1:
         xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
         url = None
         for stream in data['streamInfos']:
-            if 'type' in stream and stream['type'] == 'DASH' and 'url' in stream:
-                url = stream['url']
+            if 'type' in stream and stream['type'] == addon.getSetting('stream_type') and 'url' in stream:
+                if '/cze-' in stream['url'] or url is None:
+                    url = stream['url']
         if url is not None:
             list_item = xbmcgui.ListItem()
-            list_item.setProperty('inputstream', 'inputstream.adaptive')
-            list_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-            list_item.setMimeType('application/dash+xml')    
+            if addon.getSetting('stream_type') == 'DASH':
+                list_item.setProperty('inputstream', 'inputstream.adaptive')
+                list_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+                list_item.setMimeType('application/dash+xml')    
             list_item.setPath(url)
             xbmcplugin.setResolvedUrl(_handle, True, list_item)
         else:
             xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
+
 
 def reset_session():
     addon = xbmcaddon.Addon()
