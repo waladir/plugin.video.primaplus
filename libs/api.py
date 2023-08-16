@@ -11,11 +11,10 @@ except ImportError:
 try:
     from urllib.request import urlopen, Request
     from urllib.error import HTTPError
-    from urllib.parse import parse_qs, urlparse, urlencode
+    from urllib.parse import parse_qs, urlparse
 except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urlparse import parse_qs, urlparse
-    from urllib import urlencode
 
 import json
 import codecs

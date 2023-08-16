@@ -4,6 +4,10 @@
 <p>
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
+v1.1.3 (16.8.2023)<br>
+- možnost nastavení řazení pořadů podle abecedy<br>
+- přidaný datum vysílání<br><br>
+
 v1.1.2 (19.5.2023)<br>
 - výběr české jazykové stopy<br><br>
 
