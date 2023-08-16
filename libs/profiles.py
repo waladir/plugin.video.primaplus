@@ -111,7 +111,7 @@ def reset_profiles():
     xbmc.executebuiltin('Container.Refresh')
 
 def get_subscription():
-    data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/user/sub/active', data = None, token = get_token())
+    data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/user/sub/active', data = None, token = get_token(), skip_profile = True)
     if 'err' in data:
         xbmcgui.Dialog().notification('Prima+', 'Chyba při načtení profilů', xbmcgui.NOTIFICATION_ERROR, 5000)
         sys.exit()

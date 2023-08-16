@@ -15,20 +15,25 @@ from libs.api import get_token, call_api
 from libs.profiles import get_profile_id
 from libs.utils import get_url, plugin_id, encode, decode
 
+from datetime import datetime
+
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
 
 def get_list_item(item, favourite = False):
     list_item = None
     if item['type'] in ['movie', 'episode'] and item['distribution']['showLock'] == False:
+        date = ''
+        if item['additionals']['premiereDateTime'] is not None:
+            date = ' | ' + datetime.strptime(item['additionals']['premiereDateTime'][:-6], '%Y-%m-%dT%H:%M:%S').strftime('%d.%m.%Y')
         if item['type'] == 'episode':
-            list_item = xbmcgui.ListItem(label = item['title'] + ' (' + str(item['additionals']['episodeNumber']) + ')')
+            list_item = xbmcgui.ListItem(label = item['title'] + ' (' + str(item['additionals']['episodeNumber']) + ')' + date)
         else:
-            list_item = xbmcgui.ListItem(label = item['title'])
+            list_item = xbmcgui.ListItem(label = item['title'] + date)
         list_item.setContentLookup(False)          
         url = get_url(action='play_stream', playId = item['playId'])  
         list_item.setProperty('IsPlayable', 'true')       
-        list_item.setInfo('video', {'mediatype':'movie', 'title': item['title']})                  
+        list_item.setInfo('video', {'mediatype':'video', 'title': item['title']})                  
         list_item.setArt({'poster' : item['images']['3x5'], 'thumb' : item['images']['16x9']})
         list_item.setInfo('video', {'plot': item['perex']})
         list_item.setInfo('video', {'year': int(item['additionals']['year'])})
@@ -87,9 +92,6 @@ def list_season(label, season):
         get_list_item(item)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
 
-#.Items="strip.strip.items.vdm",e.NextItems="strip.strip.nextItems.vdm",e.BulkItems="strip.strip.bulkItems.vdm",e.Serve="strip.strip.serve.vdm",e)    
-# vdm.frontend.title
-
 def list_strip(label, stripId, strip_filter = None):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
@@ -119,6 +121,8 @@ def list_strip(label, stripId, strip_filter = None):
             recommId = data['result']['data']['recommId']
             if data['result']['data']['isNextItems'] == False:
                 last = True
+    if addon.getSetting('order') == 'podle abecedy':                
+        items = sorted(items, key=lambda d: d['title']) 
     for item in items:
         if item['type'] == 'static':
             list_item = xbmcgui.ListItem(label = item['title'])
