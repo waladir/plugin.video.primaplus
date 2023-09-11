@@ -11,6 +11,7 @@ PY3 = sys.version_info[0] == 3
 plugin_id = 'plugin.video.primaplus'
 day_translation = {'1' : 'Pondělí', '2' : 'Úterý', '3' : 'Středa', '4' : 'Čtvrtek', '5' : 'Pátek', '6' : 'Sobota', '0' : 'Neděle'}  
 day_translation_short = {'1' : 'Po', '2' : 'Út', '3' : 'St', '4' : 'Čt', '5' : 'Pá', '6' : 'So', '0' : 'Ne'}  
+view_modes = {'Seznam' : '50', 'Široký seznam' : '55', 'Posun' : '53', 'Infostěna' : '54', 'Zeď' : '500', 'Fanart' : '502'}
 
 _url = sys.argv[0]
 

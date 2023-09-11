@@ -21,6 +21,7 @@ import codecs
 import time
 import uuid
 import requests
+import gzip
 from bs4 import BeautifulSoup
 
 def call_api(url, data, token = None, method = None, skip_profile = False):
@@ -32,7 +33,7 @@ def call_api(url, data, token = None, method = None, skip_profile = False):
         else:
             headers = {'Authorization' : 'Bearer ' + str(token), 'X-OTT-Access-Token' : str(token), 'X-OTT-CDN-Url-Type' : 'WEB', 'X-OTT-Device' : addon.getSetting('deviceid'), 'X-OTT-User-SubProfile' : get_profile_id(), 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
     else:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept-language' : 'cs', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept-language' : 'cs', 'Accept-Encoding' : 'gzip', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
     if data != None:
         data = json.dumps(data).encode("utf-8")
     if method is not None:
@@ -40,7 +41,8 @@ def call_api(url, data, token = None, method = None, skip_profile = False):
     else:
         request = Request(url = url, data = data, headers = headers)
     try:
-        html = urlopen(request).read()
+        response = urlopen(request)
+        html = response.read()        
         if html and len(html) > 0:
             data = json.loads(html)
             return data

@@ -124,7 +124,7 @@ def list_menu():
     url = get_url(action='list_settings', label = 'Nastavení')  
     list_item.setArt({ 'thumb' : os.path.join(icons_dir , 'settings.png'), 'icon' : os.path.join(icons_dir , 'settings.png') })
     xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
