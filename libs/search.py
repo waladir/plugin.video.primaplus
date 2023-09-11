@@ -17,7 +17,7 @@ except ImportError:
 from libs.api import get_token, call_api
 from libs.lists import get_list_item
 from libs.profiles import get_profile_id
-from libs.utils import get_url, plugin_id
+from libs.utils import get_url, plugin_id,view_modes
 
 _handle = int(sys.argv[1])
 
@@ -37,6 +37,7 @@ def list_search(label):
 def program_search(query, label):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
+    xbmcplugin.setContent(_handle, 'movies')
     if query == '-----':
         input = xbmc.Keyboard('', 'Hledat')
         input.doModal()
@@ -63,6 +64,7 @@ def program_search(query, label):
         for item in items:
             get_list_item(item)
         xbmcplugin.endOfDirectory(_handle,cacheToDisc = False)
+        xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
     else:
         xbmcgui.Dialog().notification('Prima+','Nic nenalezeno', xbmcgui.NOTIFICATION_INFO, 3000)
 

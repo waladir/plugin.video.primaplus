@@ -4,21 +4,20 @@
 <p>
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
-v1.1.3 (16.8.2023)<br>
-- možnost nastavení řazení pořadů podle abecedy<br>
-- přidaný datum vysílání<br><br>
+v1.1.8 (11.9.2023)<br>
+- sjedocení kódu pro Leia a Matrix+<br><br>
 
-v1.1.2 (19.5.2023)<br>
-- výběr české jazykové stopy<br><br>
+v1.1.7 (7.9.2023)<br>
+- vypnutí komprese (pouze Leia)<br><br>
 
-v1.1.1 (15.5.2023)<br>
-- oprava načtení profilu<br>
-- nabídky podle tarifu<br><br>
+v1.1.6 (18.8.2023)<br>
+- možnost nastavení zobrazení<br><br>
 
-v1.1.0 (14.5.2023)<br>
-- podpora pro Kodi 18<br>
-- oprava chyb<br><br>
+v1.1.5 (17.8.2023)<br>
+- úprava zobrazení filmů/seriálů<br>
+- kešování hlavní nabídky a kategorií<br>
+- zapnutí komprese u API<br><br>
 
-v1.0.0 (13.5.2023)<br>
-- první verze<br><br>
+v1.1.4 (17.8.2023)<br>
+- oprava parsování datumu<br><br>
 </p>

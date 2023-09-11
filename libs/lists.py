@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -13,9 +14,7 @@ except ImportError:
 
 from libs.api import get_token, call_api
 from libs.profiles import get_profile_id
-from libs.utils import get_url, plugin_id, encode, decode
-
-from datetime import datetime
+from libs.utils import get_url, plugin_id, encode, view_modes
 
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
@@ -24,8 +23,12 @@ def get_list_item(item, favourite = False):
     list_item = None
     if item['type'] in ['movie', 'episode'] and item['distribution']['showLock'] == False:
         date = ''
-        if item['additionals']['premiereDateTime'] is not None:
-            date = ' | ' + datetime.strptime(item['additionals']['premiereDateTime'][:-6], '%Y-%m-%dT%H:%M:%S').strftime('%d.%m.%Y')
+        if item['additionals']['broadcastDateTime'] is not None:
+            split_date = item['additionals']['broadcastDateTime'][:10].split('-')
+            date = ' | ' + split_date[2] + '.' + split_date[1] + '.' + split_date[0]
+        elif item['additionals']['premiereDateTime'] is not None:
+            split_date = item['additionals']['premiereDateTime'][:10].split('-')
+            date = ' | ' + split_date[2] + '.' + split_date[1] + '.' + split_date[0]
         if item['type'] == 'episode':
             list_item = xbmcgui.ListItem(label = item['title'] + ' (' + str(item['additionals']['episodeNumber']) + ')' + date)
         else:
@@ -64,6 +67,7 @@ def get_list_item(item, favourite = False):
 def list_series(label, slug):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
+    xbmcplugin.setContent(_handle, 'movies')
     post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
     if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
@@ -82,19 +86,25 @@ def list_series(label, slug):
                 for item in episodes:
                     get_list_item(item)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
+
 
 def list_season(label, season):
+    addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
+    xbmcplugin.setContent(_handle, 'movies')
     season = json.loads(season)
     episodes = list(season['episodes'])
     episodes.reverse() 
     for item in episodes:
         get_list_item(item)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 def list_strip(label, stripId, strip_filter = None):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
+    xbmcplugin.setContent(_handle, 'movies')
     limit = 100
     page = 1
     last = False
@@ -131,6 +141,7 @@ def list_strip(label, stripId, strip_filter = None):
         elif item['type'] in ['movie', 'series']:
             get_list_item(item)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 def list_layout(label, layout):
     xbmcplugin.setPluginCategory(_handle, label)
@@ -144,7 +155,7 @@ def list_layout(label, layout):
                 list_item = xbmcgui.ListItem(label = strip['stripData']['title'])
                 url = get_url(action='list_strip', label = label + ' / ' + encode(strip['stripData']['title']), stripId = strip['stripData']['id'])  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
-        xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+        xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
 def list_genres(label):
     xbmcplugin.setPluginCategory(_handle, label)
@@ -157,6 +168,6 @@ def list_genres(label):
             list_item = xbmcgui.ListItem(label = genre['title'])
             url = get_url(action='list_strip', label = label + ' / ' + encode(genre['title']), stripId = '8138baa8-c933-4015-b7ea-17ac7a679da4', strip_filter = json.dumps([{'type' : 'genre', 'value' : genre['title']}]))  
             xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
-        xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+        xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
 
