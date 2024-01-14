@@ -1,16 +1,17 @@
+v1.2.2 (14.1.2024)
+- přidána správa zařízení
+
+v1.2.1 (11.1.2024)
+- registrace zařízení
+- možnost resetu zařízení
+- úprava kešovaní seznamů
+
+v1.2.0 (8.1.2024)
+- přehrávání streamů s DRM
+- možnost zapnout logování
+
+v1.1.9 (5.1.2024)
+- úprava zobrazení čísla epizod u seriálů
+
 v1.1.8 (11.9.2023)
 - sjedocení kódu pro Leia a Matrix+
-
-v1.1.7 (7.9.2023)
-- vypnutí komprese (pouze Leia)
-
-v1.1.6 (18.8.2023)
-- možnost nastavení zobrazení
-
-v1.1.5 (17.8.2023)
-- úprava zobrazení filmů/seriálů
-- kešování hlavní nabídky a kategorií
-- zapnutí komprese u API
-
-v1.1.4 (17.8.2023)
-- oprava parsování datumu
