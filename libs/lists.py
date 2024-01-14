@@ -29,7 +29,7 @@ def get_list_item(item, favourite = False):
         elif item['additionals']['premiereDateTime'] is not None:
             split_date = item['additionals']['premiereDateTime'][:10].split('-')
             date = ' | ' + split_date[2] + '.' + split_date[1] + '.' + split_date[0]
-        if item['type'] == 'episode':
+        if item['type'] == 'episode' and '(' + str(item['additionals']['episodeNumber']) + ')' not in item['title']:
             list_item = xbmcgui.ListItem(label = item['title'] + ' (' + str(item['additionals']['episodeNumber']) + ')' + date)
         else:
             list_item = xbmcgui.ListItem(label = item['title'] + date)
@@ -85,7 +85,7 @@ def list_series(label, slug):
                 episodes.reverse() 
                 for item in episodes:
                     get_list_item(item)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 
@@ -98,7 +98,7 @@ def list_season(label, season):
     episodes.reverse() 
     for item in episodes:
         get_list_item(item)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 def list_strip(label, stripId, strip_filter = None):
@@ -140,7 +140,7 @@ def list_strip(label, stripId, strip_filter = None):
             xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         elif item['type'] in ['movie', 'series']:
             get_list_item(item)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 def list_layout(label, layout):

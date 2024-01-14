@@ -7,6 +7,7 @@ except ImportError:
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
+ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0'
 
 plugin_id = 'plugin.video.primaplus'
 day_translation = {'1' : 'Pondělí', '2' : 'Úterý', '3' : 'Středa', '4' : 'Čtvrtek', '5' : 'Pátek', '6' : 'Sobota', '0' : 'Neděle'}  

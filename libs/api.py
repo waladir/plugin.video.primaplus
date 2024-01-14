@@ -21,28 +21,38 @@ import codecs
 import time
 import uuid
 import requests
-import gzip
 from bs4 import BeautifulSoup
+
+from libs.utils import ua
 
 def call_api(url, data, token = None, method = None, skip_profile = False):
     from libs.profiles import get_profile_id
+    addon = xbmcaddon.Addon()
     if token is not None:
-        addon = xbmcaddon.Addon()
+        if not addon.getSetting('device') or len(addon.getSetting('device')) == 0:
+            register_device()
         if skip_profile == True:
-            headers = {'Authorization' : 'Bearer ' + str(token), 'X-OTT-Access-Token' : str(token), 'X-OTT-CDN-Url-Type' : 'WEB', 'X-OTT-Device' : addon.getSetting('deviceid'), 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
+            headers = {'Authorization' : 'Bearer ' + str(token), 'X-OTT-Access-Token' : str(token), 'X-OTT-CDN-Url-Type' : 'WEB', 'X-OTT-Device' : addon.getSetting('device'), 'User-Agent' : ua, 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
         else:
-            headers = {'Authorization' : 'Bearer ' + str(token), 'X-OTT-Access-Token' : str(token), 'X-OTT-CDN-Url-Type' : 'WEB', 'X-OTT-Device' : addon.getSetting('deviceid'), 'X-OTT-User-SubProfile' : get_profile_id(), 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
+            headers = {'Authorization' : 'Bearer ' + str(token), 'X-OTT-Access-Token' : str(token), 'X-OTT-CDN-Url-Type' : 'WEB', 'X-OTT-Device' : addon.getSetting('device'), 'X-OTT-User-SubProfile' : get_profile_id(), 'User-Agent' : ua, 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
     else:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept-language' : 'cs', 'Accept-Encoding' : 'gzip', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
+        headers = {'User-Agent': ua, 'Accept-language' : 'cs', 'Accept-Encoding' : 'gzip', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
     if data != None:
         data = json.dumps(data).encode("utf-8")
+    if addon.getSetting('log_requests') == 'true':
+        print(url)
+        print(data)
+        print(headers)
+        print(method)
     if method is not None:
         request = Request(url = url, data = data, method = method, headers = headers)
     else:
         request = Request(url = url, data = data, headers = headers)
     try:
         response = urlopen(request)
-        html = response.read()        
+        html = response.read()
+        if addon.getSetting('log_requests') == 'true':
+            print(html)
         if html and len(html) > 0:
             data = json.loads(html)
             return data
@@ -51,7 +61,7 @@ def call_api(url, data, token = None, method = None, skip_profile = False):
     except HTTPError as e:
         return { 'err' : e.reason }      
 
-def get_token():
+def get_token(reset = False):
     addon = xbmcaddon.Addon()
     if not addon.getSetting('email') or len(addon.getSetting('email')) == 0 and not addon.getSetting('password') and len(addon.getSetting('password')) == 0:
         xbmcgui.Dialog().notification('Prima+', 'Zadejte v nastavení přihlašovací údaje', xbmcgui.NOTIFICATION_ERROR, 5000)
@@ -69,13 +79,13 @@ def get_token():
     except IOError as error:
         if error.errno != 2:
             xbmcgui.Dialog().notification('Prima+', 'Chyba při načtení session', xbmcgui.NOTIFICATION_ERROR, 5000)
-    if data is not None:
+    if data is not None and reset == False:
         data = json.loads(data)
         if 'token' in data and 'valid_to' in data and data['valid_to'] > int(time.time()):
             token = data['token']
             return token
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0'}
+    headers = {'User-Agent': ua}
     session = requests.Session()
     response = session.get(url = 'https://auth.iprima.cz/oauth2/login' , headers = headers)
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -109,3 +119,15 @@ def get_token():
     else:
         xbmcgui.Dialog().notification('Prima+', 'Chyba při přihlášení', xbmcgui.NOTIFICATION_ERROR, 5000)
         sys.exit()
+
+def register_device(token):
+    addon = xbmcaddon.Addon()
+    headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0', 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'user.device.slot.add', 'params':{'_accessToken' : token, 'deviceSlotType' : 'WEB', 'deviceSlotName' : 'Windows Firefox', 'deviceUid' : addon.getSetting('deviceid')}}
+    request = Request(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = json.dumps(post).encode("utf-8"), headers = headers)
+    response = urlopen(request)
+    html = response.read()
+    if html and len(html) > 0:
+        data = json.loads(html)
+        if 'result' and data or 'data' in data['result'] and 'slotId' in data['result']['data']:
+            addon.setSetting('device', data['result']['data']['slotId'])
