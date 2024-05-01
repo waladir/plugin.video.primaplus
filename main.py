@@ -53,7 +53,7 @@ def play_stream(playId):
         if url is not None:
             list_item = xbmcgui.ListItem()
             if addon.getSetting('stream_type') == 'DASH':
-                list_item.setProperty('inputstream', 'inputstream.adaptive')
+                list_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
                 list_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
                 if drm == True and drm_license_url and headers:
                     list_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
