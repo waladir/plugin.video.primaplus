@@ -4,7 +4,13 @@
 <p>
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
-v1.2.2 (14.1.2024)<br>
+v1.2.4 (1.5.2024)<br>
+- úprava parametru pro ISA v Kodi Leia (od roomie)<br><br>
+
+v1.2.3 (16.1.2024)<br>
+- oprava chyby při spuštění doplňku<br><br>
+
+v1.2.2 (12.1.2024)<br>
 - přidána správa zařízení<br><br>
 
 v1.2.1 (11.1.2024)<br>
@@ -15,10 +21,4 @@ v1.2.1 (11.1.2024)<br>
 v1.2.0 (8.1.2024)<br>
 - přehrávání streamů s DRM<br>
 - možnost zapnout logování<br><br>
-
-v1.1.9 (5.1.2024)<br>
-- úprava zobrazení čísla epizod u seriálů<br><br>
-
-v1.1.8 (11.9.2023)<br>
-- sjedocení kódu pro Leia a Matrix+<br><br>
 </p>

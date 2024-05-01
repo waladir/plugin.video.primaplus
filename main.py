@@ -23,7 +23,7 @@ from libs.profiles import list_profiles, set_active_profile, reset_profiles, get
 from libs.search import list_search, delete_search, program_search
 from libs.favourites import list_favourites, add_favourite, remove_favourite
 from libs.devices import list_devices, remove_device
-from libs.utils import get_url, ua
+from libs.utils import get_url, ua, PY2
 
 subscription = get_subscription()
 LAYOUTS = {'Filmy' : 'categoryMovie__' + subscription, 'Seriály' : 'categorySeries__' + subscription, 'Novinky' : 'categoryNewReleases__' + subscription}
@@ -53,7 +53,10 @@ def play_stream(playId):
         if url is not None:
             list_item = xbmcgui.ListItem()
             if addon.getSetting('stream_type') == 'DASH':
-                list_item.setProperty('inputstream', 'inputstream.adaptive')
+                if PY2:
+                    list_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+                else:
+                    list_item.setProperty('inputstream', 'inputstream.adaptive')
                 list_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
                 if drm == True and drm_license_url and headers:
                     list_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')

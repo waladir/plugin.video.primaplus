@@ -30,7 +30,7 @@ def call_api(url, data, token = None, method = None, skip_profile = False):
     addon = xbmcaddon.Addon()
     if token is not None:
         if not addon.getSetting('device') or len(addon.getSetting('device')) == 0:
-            register_device()
+            register_device(token)
         if skip_profile == True:
             headers = {'Authorization' : 'Bearer ' + str(token), 'X-OTT-Access-Token' : str(token), 'X-OTT-CDN-Url-Type' : 'WEB', 'X-OTT-Device' : addon.getSetting('device'), 'User-Agent' : ua, 'Accept': 'application/json; charset=utf-8', 'Content-type' : 'application/json;charset=UTF-8'}
         else:
