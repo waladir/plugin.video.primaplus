@@ -39,18 +39,20 @@ def play_stream(playId):
     else:
         url = None
         drm = False
+        drm_token = None
         for stream in data['streamInfos']:
             if 'type' in stream and stream['type'] == addon.getSetting('stream_type') and 'url' in stream:
                 if '/cze-' in stream['url'] or url is None:
                     url = stream['url']
                 if 'drmInfo' in stream:
                     drm = True
-                    for drminfo in stream['drmInfo']['modularDrmInfos']:
-                        if drminfo['keySystem'] == 'com.widevine.alpha':
-                            drm_license_url = drminfo['licenseServerUrl']
-                            drm_token = drminfo['token']
-                            headers = {'User-Agent': ua, 'X-AxDRM-Message' : drm_token}
-        if url is not None:
+                    if 'modularDrmInfos' in stream['drmInfo']:
+                        for drminfo in stream['drmInfo']['modularDrmInfos']:
+                            if drminfo['keySystem'] == 'com.widevine.alpha':
+                                drm_license_url = drminfo['licenseServerUrl']
+                                drm_token = drminfo['token']
+                                headers = {'User-Agent': ua, 'X-AxDRM-Message' : drm_token}
+        if url is not None and (drm == False or (drm == True and drm_token and len(drm_token) > 0)) :
             list_item = xbmcgui.ListItem()
             if addon.getSetting('stream_type') == 'DASH':
                 if PY2:
@@ -69,8 +71,10 @@ def play_stream(playId):
             list_item.setPath(url)
             xbmcplugin.setResolvedUrl(_handle, True, list_item)
         else:
-            xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
-
+            if drm == True and (not drm_token or len(drm_token) > 0) and addon.getSetting('stream_type') == 'HLS':
+                xbmcgui.Dialog().notification('Prima+', 'Nepodporovaná DRM ochrana. Zkuste použít DASH', xbmcgui.NOTIFICATION_ERROR, 5000)
+            else:
+                xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
 def reset_session():
     addon = xbmcaddon.Addon()
     addon_userdata_dir = translatePath(addon.getAddonInfo('profile'))

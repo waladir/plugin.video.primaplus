@@ -1,4 +1,4 @@
-﻿<addon id="plugin.video.primaplus" name="Prima+" provider-name="waladir" version="1.2.4">
+﻿<addon id="plugin.video.primaplus" name="Prima+" provider-name="waladir" version="1.2.5">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.requests" version="2.18.4"/>
@@ -16,6 +16,9 @@ Další informace a podporu najdete na fóru www.xbmc-kodi.cz (https://www.xbmc-
     </description>    
     <platform>all</platform>
     <news>
+v1.2.5 (2.6.2024)
+- ošetření Fairplay DRM u HLS
+
 v1.2.4 (1.5.2024)
 - úprava parametru pro ISA v Kodi Leia (od roomie)
 
@@ -29,10 +32,6 @@ v1.2.1 (11.1.2024)
 - registrace zařízení
 - možnost resetu zařízení
 - úprava kešovaní seznamů
-
-v1.2.0 (8.1.2024)
-- přehrávání streamů s DRM
-- možnost zapnout logování
     </news>
     <assets>
         <icon>icon.png</icon>

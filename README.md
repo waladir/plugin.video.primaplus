@@ -4,6 +4,10 @@
 <p>
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
+
+v1.2.5 (2.6.2024)<br>
+- ošetření Fairplay DRM u HLS<br><br>
+
 v1.2.4 (1.5.2024)<br>
 - úprava parametru pro ISA v Kodi Leia (od roomie)<br><br>
 
@@ -17,8 +21,4 @@ v1.2.1 (11.1.2024)<br>
 - registrace zařízení<br>
 - možnost resetu zařízení<br>
 - úprava kešovaní seznamů<br><br>
-
-v1.2.0 (8.1.2024)<br>
-- přehrávání streamů s DRM<br>
-- možnost zapnout logování<br><br>
 </p>
