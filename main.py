@@ -176,7 +176,7 @@ def router(paramstring):
         elif params['action'] == 'list_channels':
             list_channels(params['label'])
         elif params['action'] == 'play_channel':
-            play_channel(params['label'], params['channel'])
+            play_channel(params['playId'])
 
         elif params['action'] == 'list_archive':
             list_archive(params['label'])

@@ -10,7 +10,7 @@ import time
 
 from libs.api import call_api, get_token
 from libs.profiles import get_profile_id
-from libs.epg import get_epg_channel
+from libs.epg import get_epg_channel, epg_listitem
 from libs.utils import get_url, day_translation, day_translation_short, encode
 
 if len(sys.argv) > 1:
@@ -24,10 +24,9 @@ def list_archive(label):
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení kanálů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
         for item in data['result']['data']['items']:
-            channel = item['id'].replace('prima_', '')
             list_item = xbmcgui.ListItem(label = item['title'])
             list_item.setArt({'thumb' : item['additionals']['logoColorPng'], 'icon' : item['additionals']['logoColorPng']})
-            url = get_url(action='list_archive_days', channel = channel, label = label + ' / ' + encode(item['title']))  
+            url = get_url(action='list_archive_days', channel = item['id'], label = label + ' / ' + encode(item['title']))  
             xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)
 
@@ -55,8 +54,7 @@ def list_program(label, channel, day_min):
     label = label.replace('Archiv /','')
     xbmcplugin.setPluginCategory(_handle, label)
 
-    epg = get_epg_channel(channel, -1 * (int(day_min) + 1))
-    epg += get_epg_channel(channel, -1 * int(day_min))
+    epg = get_epg_channel(channel, -1 * int(day_min))
 
     if int(day_min) < 7:
         list_item = xbmcgui.ListItem(label='Předchozí den')
@@ -69,21 +67,17 @@ def list_program(label, channel, day_min):
     for item in epg:
         start_date = datetime.today() + timedelta(days = -1 * int(day_min))
         start_date_ts = int(time.mktime(datetime(start_date.year, start_date.month, start_date.day).timetuple()))
-        startTime = time.strptime(item['timeStart'][:-6], '%Y-%m-%dT%H:%M:%S')        
-        endTime = time.strptime(item['timeEnd'][:-6], '%Y-%m-%dT%H:%M:%S')
-        if int(time.mktime(endTime)) >= start_date_ts and int(time.mktime(endTime)) < start_date_ts + 60*60*24 and endTime < time.localtime():
-            if 'video' in item and item['video'] is not None and 'playId' in item['video'] and item['video']['playId'] is not None:
-                list_item = xbmcgui.ListItem(label = day_translation_short[datetime.fromtimestamp(time.mktime(startTime)).strftime('%w')] + ' ' + datetime.fromtimestamp(time.mktime(startTime)).strftime('%d.%m %H:%M') + ' - ' + datetime.fromtimestamp(time.mktime(endTime)).strftime('%H:%M') + ' | ' + encode(item['title']))
+        startTime = time.mktime(time.strptime(item['programStartTime'][:-6], '%Y-%m-%dT%H:%M:%S')) + 7200
+        endTime = time.mktime(time.strptime(item['programEndTime'][:-6], '%Y-%m-%dT%H:%M:%S')) + 7200
+        if int(endTime) >= start_date_ts and int(endTime) < start_date_ts + 60*60*24:
+            if 'playId' in item and item['playId'] is not None and 'playId' and 'isPlayable' in item and item['isPlayable'] == True:
+                list_item = xbmcgui.ListItem(label = day_translation_short[datetime.fromtimestamp(startTime).strftime('%w')] + ' ' + datetime.fromtimestamp(startTime).strftime('%d.%m %H:%M') + ' - ' + datetime.fromtimestamp(endTime).strftime('%H:%M') + ' | ' + encode(item['title']))
+                list_item = epg_listitem(list_item, item, None)
                 list_item.setProperty('IsPlayable', 'true')
                 list_item.setContentLookup(False)   
-                url = get_url(action='play_stream', playId = item['video']['playId'])  
-                list_item.setInfo('video', {'mediatype':'movie', 'title': item['title']})                  
-                list_item.setArt({'poster' : item['video']['image']['tileM_233x135'], 'thumb' : item['video']['image']['tileM_233x135']})
-                list_item.setInfo('video', {'plot': item['annotation']})
-                list_item.setInfo('video', {'country': item['countries']})
-                list_item.setInfo('video', {'genre' : item['genres']})    
+                url = get_url(action='play_stream', playId = item['playId'])  
             else:
-                list_item = xbmcgui.ListItem(label = '[COLOR = grey]' + day_translation_short[datetime.fromtimestamp(time.mktime(startTime)).strftime('%w')] + ' ' + datetime.fromtimestamp(time.mktime(startTime)).strftime('%d.%m %H:%M') + ' - ' + datetime.fromtimestamp(time.mktime(endTime)).strftime('%H:%M') + ' | ' + encode(item['title']) + '[/COLOR]')
+                list_item = xbmcgui.ListItem(label = '[COLOR = grey]' + day_translation_short[datetime.fromtimestamp(startTime).strftime('%w')] + ' ' + datetime.fromtimestamp(startTime).strftime('%d.%m %H:%M') + ' - ' + datetime.fromtimestamp(endTime).strftime('%H:%M') + ' | ' + encode(item['title']) + '[/COLOR]')
             xbmcplugin.addDirectoryItem(_handle, url, list_item, False)
 
     if int(day_min) > 0:

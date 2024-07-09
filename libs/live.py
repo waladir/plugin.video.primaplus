@@ -4,9 +4,9 @@ import xbmcgui
 import xbmcplugin
 
 from libs.api import call_api, get_token
-from libs.epg import get_epg_live
+from libs.epg import get_epg_live, epg_listitem
 from libs.profiles import get_profile_id
-from libs.utils import get_url, encode
+from libs.utils import get_url
 
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
@@ -20,50 +20,37 @@ def list_channels(label):
     else:
         channels = []
         for item in data['result']['data']['items']:
-            channels.append(item['id'].replace('prima_', ''))
+            channels.append(item['id'])
         epg = get_epg_live(channels)
         for item in data['result']['data']['items']:
-            channel = item['id'].replace('prima_', '')
+            channel = item['id']
             if channel in epg:
                 list_item = xbmcgui.ListItem(label = item['title'] + ' | ' + epg[channel]['title'])
-                url = get_url(action='play_channel', label = label + ' / ' + encode(item['title']), channel = channel)  
-                list_item.setInfo('video', {'mediatype':'movie', 'title': item['title'] + ' | ' + epg[channel]['title']})                  
-                if epg[channel]['video'] is not None and 'teaser' in epg[channel]['video']:
-                    list_item.setInfo('video', {'plot': epg[channel]['video']['teaser']})
-                if 'year' in epg[channel] and epg[channel]['year'] is not None:
-                    list_item.setInfo('video', {'year': int(epg[channel]['year'])})
-                list_item.setInfo('video', {'country': epg[channel]['countries']})
-                list_item.setInfo('video', {'genre' : epg[channel]['genres']})    
+                url = get_url(action='play_channel', playId = item['playId'])  
+                list_item = epg_listitem(list_item, epg[channel], item['additionals']['logoColorPng'])
             else:
                 list_item = xbmcgui.ListItem(label = item['title'])
-                url = get_url(action='play_channel', label = label + ' / ' + encode(item['title']), channel = channel)  
+                url = get_url(action='play_channel', playId = item['playId'])  
                 list_item.setInfo('video', {'mediatype':'movie', 'title': item['title']})                  
-            list_item.setArt({'thumb' : item['additionals']['logoColorPng'], 'icon' : item['additionals']['logoColorPng']})
+                list_item.setArt({'thumb' : item['additionals']['logoColorPng'], 'icon' : item['additionals']['logoColorPng']})
             list_item.setProperty('IsPlayable', 'true')       
             list_item.setContentLookup(False)          
             xbmcplugin.addDirectoryItem(_handle, url, list_item, False)
         xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)  
 
-def play_channel(label, channel):
-    xbmcplugin.setPluginCategory(_handle, label)
-    post = {'query' : '{ channelList { id, playId } }'}
-    data = call_api(url = 'https://api.iprima.cz/graphql', data = post, token = get_token())
-    if 'data' not in data or 'channelList' not in data['data']:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
-    for item in data['data']['channelList']:
-        if item['id'] == channel:
-            data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/products/id-' + item['playId'] + '/play', data = None, token = get_token())
-            if 'streamInfos' not in data or len(data['streamInfos']) < 1:
-                xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
-            else:
-                url = None
-                for stream in data['streamInfos']:
-                    if 'type' in stream and stream['type'] == 'HLS' and 'url' in stream:
-                        url = stream['url']
-                if url is not None:
-                    list_item = xbmcgui.ListItem()
-                    list_item.setPath(url)
-                    xbmcplugin.setResolvedUrl(_handle, True, list_item)
-                else:
-                    xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
+def play_channel(playId):
+    data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/products/id-' + playId + '/play', data = None, token = get_token())
+    if 'streamInfos' not in data or len(data['streamInfos']) < 1:
+        xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
+    else:
+        url = None
+        for stream in data['streamInfos']:
+            if 'type' in stream and stream['type'] == 'HLS' and 'url' in stream:
+                url = stream['url']
+        if url is not None:
+            list_item = xbmcgui.ListItem()
+            list_item.setPath(url)
+            xbmcplugin.setResolvedUrl(_handle, True, list_item)
+        else:
+            xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)
 

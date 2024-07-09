@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
+import xbmc
+
 try:
     from urllib.parse import urlencode
 except ImportError:
@@ -30,3 +32,7 @@ def encode(string_to_encode):
         return string_to_encode.encode('utf-8')
     else:
         return string_to_encode  
+    
+
+def get_kodi_version():
+    return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])    
