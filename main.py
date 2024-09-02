@@ -33,6 +33,10 @@ if len(sys.argv) > 1:
 
 def play_stream(playId):
     addon = xbmcaddon.Addon()
+    if playId == 'N/A':
+        xbmcgui.Dialog().notification('Prima+', 'Pořad není k dispozici!', xbmcgui.NOTIFICATION_ERROR, 5000)
+        return
+
     data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/products/id-' + playId + '/play', data = None, token = get_token())
     if 'streamInfos' not in data or len(data['streamInfos']) < 1:
         xbmcgui.Dialog().notification('Prima+', 'Chyba při přehrání pořadu', xbmcgui.NOTIFICATION_ERROR, 5000)

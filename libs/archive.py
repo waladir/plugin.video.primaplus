@@ -78,6 +78,7 @@ def list_program(label, channel, day_min):
                 url = get_url(action='play_stream', playId = item['playId'])  
             else:
                 list_item = xbmcgui.ListItem(label = '[COLOR = grey]' + day_translation_short[datetime.fromtimestamp(startTime).strftime('%w')] + ' ' + datetime.fromtimestamp(startTime).strftime('%d.%m %H:%M') + ' - ' + datetime.fromtimestamp(endTime).strftime('%H:%M') + ' | ' + encode(item['title']) + '[/COLOR]')
+                url = get_url(action='play_stream', playId = 'N/A') 
             xbmcplugin.addDirectoryItem(_handle, url, list_item, False)
 
     if int(day_min) > 0:
