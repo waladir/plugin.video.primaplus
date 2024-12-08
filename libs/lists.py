@@ -77,7 +77,7 @@ def list_series(label, slug):
         if len(seasons) > 1:
             for season in seasons:
                 list_item = xbmcgui.ListItem(label = season['title'])
-                url = get_url(action='list_season', label = label + ' / ' + encode(season['title']), season = json.dumps(season))  
+                url = get_url(action='list_season', label = label + ' / ' + encode(season['title']), slug = slug, season = season['id'])  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         else:
             for season in seasons:
@@ -89,17 +89,25 @@ def list_series(label, slug):
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 
-def list_season(label, season):
+def list_season(label, slug, season):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
-    season = json.loads(season)
-    episodes = list(season['episodes'])
-    episodes.reverse() 
-    for item in episodes:
-        get_list_item(item)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
-    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
+    current_season = season
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
+        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
+    else:
+        seasons = data['result']['data']['title']['seasons']
+        for season in seasons:
+            if season['id'] == current_season:
+                episodes = list(season['episodes'])
+                episodes.reverse() 
+                for item in episodes:
+                    get_list_item(item)
+                xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
+        xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 def list_strip(label, stripId, strip_filter = None):
     addon = xbmcaddon.Addon()

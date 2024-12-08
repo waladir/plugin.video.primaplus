@@ -170,7 +170,7 @@ def router(paramstring):
         elif params['action'] == 'list_series':
             list_series(params['label'], params['slug'])
         elif params['action'] == 'list_season':
-            list_season(params['label'], params['season'])
+            list_season(params['label'], params['slug'], params['season'])
         elif params['action'] == 'list_genres':
             list_genres(params['label'])
 
