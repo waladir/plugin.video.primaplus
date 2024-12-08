@@ -7,6 +7,7 @@
                 <setting label="Zařízení" type="text" id="device" default="" enable="false"/>
                 <setting label="Typ streamu" type="select" id="stream_type" values="DASH|HLS" default="DASH"/>
                 <setting label="Řazení" type="select" id="order" values="výchozí|podle abecedy" default="výchozí"/>
+                <setting label="Řazení epizod" type="select" id="episodes_order" values="od nejnovějších|od nejstarších" default="od nejstarších"/>
                 <setting label="Zobrazení seznamů filmů a seriálů" type="select" id="viewmode" values="Seznam|Široký seznam|Posun|Infostěna|Zeď|Fanart" default="Seznam"/>
                 <setting label="Nová session" type="action" action="RunPlugin(plugin://plugin.video.primaplus?action=reset_session)"/>    
                 <setting label="Logovat požadavky" type="bool" id="log_requests" default="false"/>
