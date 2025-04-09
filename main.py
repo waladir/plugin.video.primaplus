@@ -98,8 +98,6 @@ def reset_device():
     xbmcgui.Dialog().notification('Prima+', 'Zařízení bylo resetováno', xbmcgui.NOTIFICATION_INFO, 5000)  
     xbmc.executebuiltin('Container.Refresh')
   
-
-
 def list_settings(label):
     _handle = int(sys.argv[1])
     xbmcplugin.setPluginCategory(_handle, label)
@@ -121,10 +119,10 @@ def list_menu():
     addon = xbmcaddon.Addon()
     icons_dir = os.path.join(addon.getAddonInfo('path'), 'resources','images')
 
-    for layout in LAYOUTS:
-        list_item = xbmcgui.ListItem(label = layout)
-        url = get_url(action='list_layout', label = layout, layout = LAYOUTS[layout])  
-        xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
+    # for layout in LAYOUTS:
+    #     list_item = xbmcgui.ListItem(label = layout)
+    #     url = get_url(action='list_layout', label = layout, layout = LAYOUTS[layout])  
+    #     xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
 
     list_item = xbmcgui.ListItem(label = 'Žánry')
     url = get_url(action='list_genres', label = 'Žánry')  

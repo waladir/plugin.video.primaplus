@@ -1,3 +1,6 @@
+v1.3.4 (9.4.2025)
+- odstranění nefunkčních položek (Filmy, Seriály, Novinky)
+
 v1.3.3 (9.12.2024)
 - přidaná možnost změny řazení epizod
 
@@ -9,6 +12,3 @@ v1.3.1 (9.7.2024)
 
 v1.3.0 (9.7.2024)
 - přepracované živé vysílání a archiv
-
-v1.2.5 (2.6.2024)
-- ošetření Fairplay DRM u HLS
