@@ -59,6 +59,7 @@ def call_api(url, data, token = None, method = None, skip_profile = False):
         else:
             return []
     except HTTPError as e:
+        print(e.reason)
         return { 'err' : e.reason }      
 
 def get_token(reset = False):
