@@ -11,12 +11,12 @@ except ImportError:
     from xbmc import translatePath
 
 try:
-    from urlparse import parse_qsl
+    from urlparse import parse_qsl # type: ignore
 except ImportError:
     from urllib.parse import parse_qsl
 
 from libs.api import get_token, call_api, register_device
-from libs.lists import list_layout, list_strip, list_series, list_season, list_genres
+from libs.lists import list_layout, list_strip, list_series, list_season, list_genres, list_recombee_strip
 from libs.live import list_channels, play_channel
 from libs.archive import list_archive, list_archive_days, list_program
 from libs.profiles import list_profiles, set_active_profile, reset_profiles, get_subscription
@@ -26,7 +26,7 @@ from libs.devices import list_devices, remove_device
 from libs.utils import get_url, ua, PY2
 
 subscription = get_subscription()
-LAYOUTS = {'Filmy' : 'categoryMovie__' + subscription, 'Seriály' : 'categorySeries__' + subscription, 'Novinky' : 'categoryNewReleases__' + subscription}
+LAYOUTS = {'Filmy' : 'categoryMovie__' + subscription, 'Seriály' : 'categorySeries__' + subscription, 'Děti' : 'kids__' + subscription, 'Novinky' : 'categoryNewReleases__' + subscription}
 
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
@@ -118,11 +118,10 @@ def list_settings(label):
 def list_menu():
     addon = xbmcaddon.Addon()
     icons_dir = os.path.join(addon.getAddonInfo('path'), 'resources','images')
-
-    # for layout in LAYOUTS:
-    #     list_item = xbmcgui.ListItem(label = layout)
-    #     url = get_url(action='list_layout', label = layout, layout = LAYOUTS[layout])  
-    #     xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
+    for layout in LAYOUTS:
+        list_item = xbmcgui.ListItem(label = layout)
+        url = get_url(action='list_layout', label = layout, layout = LAYOUTS[layout])  
+        xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
 
     list_item = xbmcgui.ListItem(label = 'Žánry')
     url = get_url(action='list_genres', label = 'Žánry')  
@@ -153,7 +152,7 @@ def list_menu():
     url = get_url(action='list_settings', label = 'Nastavení')  
     list_item.setArt({ 'thumb' : os.path.join(icons_dir , 'settings.png'), 'icon' : os.path.join(icons_dir , 'settings.png') })
     xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = False)    
 
 def router(paramstring):
     params = dict(parse_qsl(paramstring))
@@ -165,6 +164,8 @@ def router(paramstring):
                 list_strip(params['label'], params['stripId'], params['strip_filter'])
             else:
                 list_strip(params['label'], params['stripId'])
+        elif params['action'] == 'list_recombee_strip':
+            list_recombee_strip(params['label'], params['recombeeScenarioId'])
         elif params['action'] == 'list_series':
             list_series(params['label'], params['slug'])
         elif params['action'] == 'list_season':

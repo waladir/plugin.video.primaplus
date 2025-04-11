@@ -7,6 +7,8 @@ try:
 except ImportError:
     from urllib import urlencode
 
+import time
+
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0'
@@ -33,6 +35,22 @@ def encode(string_to_encode):
     else:
         return string_to_encode  
     
-
 def get_kodi_version():
     return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])    
+
+def hmac_sign(message):
+    import hashlib
+    import hmac
+    token = 'syGAjIijTmzHy7kPeckrr8GBc8HYHvEyQpuJsfjV7Dnxq02wUf3k5IAzgVTfCtx6'    
+    key = token.encode('utf-8')
+    message = message.encode('utf-8')
+    digest = hmac.new(key, message, hashlib.sha1)
+    return digest.hexdigest()
+
+def get_recombee_url():
+    from libs.profiles import get_profile_id
+    profile_id = get_profile_id()
+    base_url = 'https://client-rapi-prima.recombee.com'
+    uri = '/ftv-prima-cross-domain/recomms/users/' + profile_id + '/items/?frontend_timestamp=' + str(int(time.time()+10))
+    url = base_url + uri + '&frontend_sign=' + hmac_sign(uri)
+    return url

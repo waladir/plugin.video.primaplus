@@ -1,3 +1,6 @@
+v1.3.5 (11.4.2025)
+- přidání položek (Filmy, Seriály, Děti, Novinky) do hlavního menu
+
 v1.3.4 (9.4.2025)
 - odstranění nefunkčních položek (Filmy, Seriály, Novinky)
 
@@ -9,6 +12,3 @@ v1.3.2 (8.12.2024)
 
 v1.3.1 (9.7.2024)
 - ošetření chybějícího EPG
-
-v1.3.0 (9.7.2024)
-- přepracované živé vysílání a archiv
