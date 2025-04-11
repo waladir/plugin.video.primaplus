@@ -13,15 +13,15 @@ try:
     from urllib.error import HTTPError
     from urllib.parse import parse_qs, urlparse
 except ImportError:
-    from urllib2 import urlopen, Request, HTTPError
-    from urlparse import parse_qs, urlparse
+    from urllib2 import urlopen, Request, HTTPError # type: ignore
+    from urlparse import parse_qs, urlparse # type: ignore
 
 import json
 import codecs
 import time
 import uuid
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup # type: ignore
 
 from libs.utils import ua
 
@@ -42,8 +42,6 @@ def call_api(url, data, token = None, method = None, skip_profile = False):
     if addon.getSetting('log_requests') == 'true':
         print(url)
         print(data)
-        print(headers)
-        print(method)
     if method is not None:
         request = Request(url = url, data = data, method = method, headers = headers)
     else:

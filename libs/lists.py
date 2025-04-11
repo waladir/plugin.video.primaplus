@@ -14,7 +14,7 @@ except ImportError:
 
 from libs.api import get_token, call_api
 from libs.profiles import get_profile_id
-from libs.utils import get_url, plugin_id, encode, view_modes
+from libs.utils import get_url, plugin_id, encode, view_modes, get_recombee_url
 
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
@@ -110,6 +110,28 @@ def list_season(label, slug, season):
                 xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
         xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
+def list_recombee_strip(label,recombeeScenarioId):
+    addon = xbmcaddon.Addon()
+    xbmcplugin.setPluginCategory(_handle, label)
+    xbmcplugin.setContent(_handle, 'movies')
+    items = []
+    post = {"cascadeCreate":True,"returnProperties":True,"includedProperties":["xFrontendMetadata"],"expertSettings":{"returnedInteractionTypes":["viewPortion","purchase"]},"scenario":recombeeScenarioId,"count":70,"filter":"'type' in {\"movie\", \"series\", \"episode\"}"}
+    data = call_api(url = get_recombee_url(), data = post, token = get_token())
+    if 'recomms' not in data:    
+        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
+    else:
+        for item in data['recomms']:
+            if 'values' in item and 'xFrontendMetadata' in item['values'] and item['values']['xFrontendMetadata'] is not None:
+                items.append(json.loads(item['values']['xFrontendMetadata']))
+
+    if addon.getSetting('order') == 'podle abecedy':                
+        items = sorted(items, key=lambda d: d['title']) 
+    for item in items:
+        if item['type'] in ['movie', 'series', 'episode'] and item['distribution']['showLock'] == False:
+            get_list_item(item)
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
+    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
+
 def list_strip(label, stripId, strip_filter = None):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
@@ -162,7 +184,7 @@ def list_layout(label, layout):
         for strip in data['result']['data']:
             if strip['type'] == 'strip' and strip['stripData']['layoutType'] in ['portraitStrip', 'landscapeStrip']:
                 list_item = xbmcgui.ListItem(label = strip['stripData']['title'])
-                url = get_url(action='list_strip', label = label + ' / ' + encode(strip['stripData']['title']), stripId = strip['stripData']['id'])  
+                url = get_url(action='list_recombee_strip', label = label + ' / ' + encode(strip['stripData']['title']), recombeeScenarioId = strip['recombeeScenarioId'])  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
