@@ -1,3 +1,6 @@
+v1.3.6 (29.5.2025)
+- řazení epizod u sérií bez sezón
+
 v1.3.5 (11.4.2025)
 - přidání položek (Filmy, Seriály, Děti, Novinky) do hlavního menu
 
@@ -9,6 +12,3 @@ v1.3.3 (9.12.2024)
 
 v1.3.2 (8.12.2024)
 - optimalizace u sezón s velkým počtem epizod
-
-v1.3.1 (9.7.2024)
-- ošetření chybějícího EPG

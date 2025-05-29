@@ -82,7 +82,8 @@ def list_series(label, slug):
         else:
             for season in seasons:
                 episodes = list(season['episodes'])
-                episodes.reverse() 
+                if addon.getSetting('episodes_order') == 'od nejstarších':
+                    episodes.reverse() 
                 for item in episodes:
                     get_list_item(item)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
