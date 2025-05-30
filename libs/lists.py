@@ -64,6 +64,15 @@ def get_list_item(item, favourite = False):
         xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
     return list_item
 
+def episodes_dict(episodes):
+    episodes_dict = {}
+    addon = xbmcaddon.Addon()
+    for item in episodes:
+        key = str(item['additionals']['seasonNumber']).zfill(3) + str(item['additionals']['episodeNumber']).zfill(5)
+        episodes_dict.update({key : item})
+    return episodes_dict
+
+
 def list_series(label, slug):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
@@ -80,12 +89,14 @@ def list_series(label, slug):
                 url = get_url(action='list_season', label = label + ' / ' + encode(season['title']), slug = slug, season = season['id'])  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         else:
+            if addon.getSetting('episodes_order') == 'od nejstarších':
+                reversed = False
+            else:
+                reversed = True
             for season in seasons:
-                episodes = list(season['episodes'])
-                if addon.getSetting('episodes_order') == 'od nejstarších':
-                    episodes.reverse() 
-                for item in episodes:
-                    get_list_item(item)
+                episodes = episodes_dict(list(season['episodes']))
+                for id in sorted(episodes.keys(), reverse = reversed):
+                    get_list_item(episodes[id])
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
@@ -100,14 +111,16 @@ def list_season(label, slug, season):
     if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
+        if addon.getSetting('episodes_order') == 'od nejstarších':
+            reversed = False
+        else:
+            reversed = True
         seasons = data['result']['data']['title']['seasons']
         for season in seasons:
             if season['id'] == current_season:
-                episodes = list(season['episodes'])
-                if addon.getSetting('episodes_order') == 'od nejstarších':
-                    episodes.reverse() 
-                for item in episodes:
-                    get_list_item(item)
+                episodes = episodes_dict(list(season['episodes']))
+                for id in sorted(episodes.keys(), reverse = reversed):
+                    get_list_item(episodes[id])
                 xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
         xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 

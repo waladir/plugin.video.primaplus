@@ -1,3 +1,6 @@
+v1.3.7 (29.5.2025)
+- oprava řazení epizod
+
 v1.3.6 (29.5.2025)
 - řazení epizod u sérií bez sezón
 
@@ -9,6 +12,3 @@ v1.3.4 (9.4.2025)
 
 v1.3.3 (9.12.2024)
 - přidaná možnost změny řazení epizod
-
-v1.3.2 (8.12.2024)
-- optimalizace u sezón s velkým počtem epizod
