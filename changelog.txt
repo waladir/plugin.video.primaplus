@@ -1,5 +1,5 @@
 v1.3.8 (11.6.2025)
-- řešení ruzných epizod se stejním číslem epizody
+- řešení ruzných epizod se stejným číslem epizody
 
 v1.3.7 (29.5.2025)
 - oprava řazení epizod
