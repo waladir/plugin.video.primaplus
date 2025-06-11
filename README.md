@@ -4,6 +4,8 @@
 <p>
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
+v1.3.8 (11.6.2025)<br>
+- řešení ruzných epizod se stejním číslem epizody<br><br>
 
 v1.3.7 (29.5.2025)<br>
 - oprava řazení epizod<br><br>
@@ -16,7 +18,4 @@ v1.3.5 (11.4.2025)<br>
 
 v1.3.4 (9.4.2025)<br>
 - odstranění nefunkčních položek (Filmy, Seriály, Novinky)<br><br>
-
-v1.3.3 (9.12.2024)<br>
-- přidaná možnost změny řazení epizod<br><br>
 </p>

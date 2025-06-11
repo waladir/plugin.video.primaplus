@@ -66,10 +66,11 @@ def get_list_item(item, favourite = False):
 
 def episodes_dict(episodes):
     episodes_dict = {}
-    addon = xbmcaddon.Addon()
+    cnt = 1
     for item in episodes:
-        key = str(item['additionals']['seasonNumber']).zfill(3) + str(item['additionals']['episodeNumber']).zfill(5)
+        key = str(item['additionals']['seasonNumber']).zfill(3) + str(item['additionals']['episodeNumber']).zfill(5) + str(cnt).zfill(4)
         episodes_dict.update({key : item})
+        cnt += 1
     return episodes_dict
 
 
