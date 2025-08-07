@@ -16,7 +16,7 @@ except ImportError:
     from urllib.parse import parse_qsl
 
 from libs.api import get_token, call_api, register_device
-from libs.lists import list_layout, list_strip, list_series, list_season, list_genres, list_recombee_strip
+from libs.lists import list_layout, list_series, list_season, list_genres, list_recombee_strip
 from libs.live import list_channels, play_channel
 from libs.archive import list_archive, list_archive_days, list_program
 from libs.profiles import list_profiles, set_active_profile, reset_profiles, get_subscription
@@ -158,14 +158,12 @@ def router(paramstring):
     params = dict(parse_qsl(paramstring))
     if params:
         if params['action'] == 'list_layout':
-            list_layout(params['label'], params['layout'])
-        elif params['action'] == 'list_strip':
-            if 'strip_filter' in params:
-                list_strip(params['label'], params['stripId'], params['strip_filter'])
+            if 'recombee_filter' in params:
+                list_layout(params['label'], params['layout'], params['recombee_filter'])
             else:
-                list_strip(params['label'], params['stripId'])
+                list_layout(params['label'], params['layout'])
         elif params['action'] == 'list_recombee_strip':
-            list_recombee_strip(params['label'], params['recombeeScenarioId'])
+            list_recombee_strip(params['label'], params['recombeeScenarioId'], params['recombee_filter'])
         elif params['action'] == 'list_series':
             list_series(params['label'], params['slug'])
         elif params['action'] == 'list_season':

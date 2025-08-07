@@ -1,9 +1,12 @@
 <h1>Prima+</h1>
 <p>
-<h3>Kodi doplňek pro Prima+</h3>
+<h3>Kodi doplněk pro Prima+</h3>
 <p>
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
+
+v1.4.1 (7.8.2025)<br>
+- změny v API Prima+ II.<br><br>
 
 v1.4.0 (7.8.2025)<br>
 - změny v API Prima+<br><br>
@@ -16,7 +19,4 @@ v1.3.7 (29.5.2025)<br>
 
 v1.3.6 (29.5.2025)<br>
 - řazení epizod u sérií bez sezón<br><br>
-
-v1.3.5 (11.4.2025)<br>
-- přidání položek (Filmy, Seriály, Děti, Novinky) do hlavního menu<br><br>
 </p>

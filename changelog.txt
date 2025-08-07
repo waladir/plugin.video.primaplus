@@ -1,3 +1,6 @@
+v1.4.1 (7.8.2025)
+- změny v API Prima+ II.
+
 v1.4.0 (7.8.2025)
 - změny v API Prima+
 
@@ -9,6 +12,3 @@ v1.3.7 (29.5.2025)
 
 v1.3.6 (29.5.2025)
 - řazení epizod u sérií bez sezón
-
-v1.3.5 (11.4.2025)
-- přidání položek (Filmy, Seriály, Děti, Novinky) do hlavního menu

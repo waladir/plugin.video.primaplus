@@ -13,7 +13,7 @@ except ImportError:
     from urllib import quote
 
 from libs.api import get_token, call_api
-from libs.profiles import get_profile_id
+from libs.profiles import get_profile_id, get_subscription
 from libs.utils import get_url, plugin_id, encode, view_modes, get_recombee_url
 
 if len(sys.argv) > 1:
@@ -125,12 +125,14 @@ def list_season(label, slug, season):
                 xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
         xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
-def list_recombee_strip(label,recombeeScenarioId):
+def list_recombee_strip(label, recombeeScenarioId, recombee_filter):
+    if recombee_filter == 'none':
+        recombee_filter = ''
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
     items = []
-    post = {"cascadeCreate":True,"returnProperties":True,"includedProperties":["xFrontendMetadata"],"expertSettings":{"returnedInteractionTypes":["viewPortion","purchase"]},"scenario":recombeeScenarioId,"count":70,"filter":"'type' in {\"movie\", \"series\", \"episode\"}"}
+    post = {"cascadeCreate":True,"returnProperties":True,"includedProperties":["xFrontendMetadata"],"expertSettings":{"returnedInteractionTypes":["viewPortion","purchase"]},"scenario":recombeeScenarioId,"count":70,"filter":"'type' in {\"movie\", \"series\", \"episode\"}" + recombee_filter}
     data = call_api(url = get_recombee_url(), data = post, token = get_token())
     if 'recomms' not in data:    
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
@@ -147,49 +149,7 @@ def list_recombee_strip(label,recombeeScenarioId):
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
-def list_strip(label, stripId, strip_filter = None):
-    addon = xbmcaddon.Addon()
-    xbmcplugin.setPluginCategory(_handle, label)
-    xbmcplugin.setContent(_handle, 'movies')
-    limit = 100
-    page = 1
-    last = False
-    items = []
-    while last == False:
-        if page == 1:
-            if strip_filter is not None:
-                post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'strip.strip.items.vdm', 'params' : {'filter' : json.loads(strip_filter), 'deviceType' : 'WEB', 'stripId' : stripId, 'limit' : limit, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}
-            else:
-                post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'strip.strip.items.vdm', 'params' : {'deviceType' : 'WEB', 'stripId' : stripId, 'limit' : limit, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}
-        else:
-            if strip_filter is not None:
-                post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'strip.strip.nextItems.vdm', 'params' : {'filter' : json.loads(strip_filter), 'deviceType' : 'WEB', 'stripId' : stripId, 'limit' : limit, 'offset' : int(page) * limit, 'recommId' : recommId, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}
-            else:
-                post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'strip.strip.nextItems.vdm', 'params' : {'deviceType' : 'WEB', 'stripId' : stripId, 'limit' : limit, 'offset' : int(page) * limit, 'recommId' : recommId, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}
-        data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
-        if 'result' not in data or 'data' not in data['result'] or 'items' not in data['result']['data']:
-            if page < 11:
-                xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
-            last = True
-        else:
-            items += data['result']['data']['items']
-            page += 1
-            recommId = data['result']['data']['recommId']
-            if data['result']['data']['isNextItems'] == False:
-                last = True
-    if addon.getSetting('order') == 'podle abecedy':                
-        items = sorted(items, key=lambda d: d['title']) 
-    for item in items:
-        if item['type'] == 'static':
-            list_item = xbmcgui.ListItem(label = item['title'])
-            url = get_url(action='list_strip', label = label + ' / ' + encode(item['title']), stripId = stripId, strip_filter = json.dumps([{'type' : 'genre', 'value' : item['title']}]))  
-            xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
-        elif item['type'] in ['movie', 'series']:
-            get_list_item(item)
-    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
-    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
-
-def list_layout(label, layout):
+def list_layout(label, layout, recombee_filter = 'none'):
     xbmcplugin.setPluginCategory(_handle, label)
     layout = layout.split('__')
     pageSlug = layout[0]
@@ -200,18 +160,15 @@ def list_layout(label, layout):
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadůx', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
         for strip in data['result']['data']['layoutBlocks']:
-            if strip['stripData']['stripType'] in ['defaultStrip', 'bannerStrip', 'genreStrip']:
-                print(strip)
-                if strip['stripData']['recombeeDataSource'] is not None and 'scenario' in strip['stripData']['recombeeDataSource']:
-                    recombeeScenarioId = strip['stripData']['recombeeDataSource']['scenario']
-                else:
-                    recombeeScenarioId = ''
+            if strip['stripData']['stripType'] in ['defaultStrip', 'bannerStrip'] and strip['stripData']['recombeeDataSource'] is not None:
+                recombeeScenarioId = strip['stripData']['recombeeDataSource']['scenario']
                 list_item = xbmcgui.ListItem(label = strip['stripData']['title'])
-                url = get_url(action='list_recombee_strip', label = label + ' / ' + encode(strip['stripData']['title']), recombeeScenarioId = recombeeScenarioId)  
+                url = get_url(action='list_recombee_strip', label = label + ' / ' + encode(strip['stripData']['title']), recombeeScenarioId = recombeeScenarioId, recombee_filter = recombee_filter)  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
 def list_genres(label):
+    subscription = get_subscription()
     xbmcplugin.setPluginCategory(_handle, label)
     post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.genre.list', 'params' : {}}
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
@@ -220,7 +177,7 @@ def list_genres(label):
     else:
         for genre in data['result']['data']:
             list_item = xbmcgui.ListItem(label = genre['title'])
-            url = get_url(action='list_strip', label = label + ' / ' + encode(genre['title']), stripId = '8138baa8-c933-4015-b7ea-17ac7a679da4', strip_filter = json.dumps([{'type' : 'genre', 'value' : genre['title']}]))  
+            url = get_url(action='list_layout', label = label + ' / ' + encode(genre['title']), layout = 'genres__' + subscription, recombee_filter = " AND \"" + encode(genre['title']) + "\" in 'xGenres'")  
             xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
