@@ -13,16 +13,16 @@ if len(sys.argv) > 1:
 
 def list_channels(label):
     xbmcplugin.setPluginCategory(_handle, label)
-    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'strip.strip.items.vdm', 'params' : {'deviceType' : 'WEB', 'stripId' : '4e0d6d10-4183-4424-8795-2edc47281e9e', 'profileId' : get_profile_id()}}
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'epg.channel.list', 'params' : {}}
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
     if 'result' not in data or 'data' not in data['result']:
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení kanálů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
         channels = []
-        for item in data['result']['data']['items']:
+        for item in data['result']['data']:
             channels.append(item['id'])
         epg = get_epg_live(channels)
-        for item in data['result']['data']['items']:
+        for item in data['result']['data']:
             channel = item['id']
             if channel in epg:
                 list_item = xbmcgui.ListItem(label = item['title'] + ' | ' + epg[channel]['title'])

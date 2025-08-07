@@ -85,30 +85,11 @@ def get_token(reset = False):
             return token
 
     headers = {'User-Agent': ua}
-    session = requests.Session()
-    response = session.get(url = 'https://auth.iprima.cz/oauth2/login' , headers = headers)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    input = soup.find('input', {'name' : '_csrf_token'})
-    if input is None:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba při přihlášení', xbmcgui.NOTIFICATION_ERROR, 5000)
-        sys.exit()
-    else:
-        csrf_token = input.get('value')
-
-    response = session.post(url = 'https://auth.iprima.cz/oauth2/login', json = {'_email' : addon.getSetting('email'), '_password' : addon.getSetting('password'), '_csrf_token' : csrf_token}, headers = headers)
-    response = session.get(url = 'https://auth.iprima.cz/oauth2/authorize?auth_init_url=https%3A%2F%2Fwww.iprima.cz%2F&auth_return_url=https%3A%2F%2Fwww.iprima.cz%2F%3Fauthentication%3Dcancelled&client_id=prima_sso&redirect_uri=https%3A%2F%2Fauth.iprima.cz%2Fsso%2Fauth-check&response_type=code&scope=openid%20email%20profile%20phone%20address%20offline_access&state=prima_sso', headers = headers)
-    auth_url = parse_qs(urlparse(response.url).query)
-    if 'code' not in auth_url:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba při přihlášení', xbmcgui.NOTIFICATION_ERROR, 5000)
-        sys.exit()
-    auth_code = auth_url['code'][0]
-
-    data = {'scope' : 'openid+email+profile+phone+address+offline_access', 'client_id' : 'prima_sso', 'grant_type' : 'authorization_code', 'code' : auth_code, 'redirect_uri' : 'https://auth.iprima.cz/sso/auth-check'}
-    response = session.post(url = 'https://auth.iprima.cz/oauth2/token', json = data, headers = headers)
-    token_data = json.loads(response.content)
-    if 'access_token' in token_data:
-        token = token_data['access_token']
-        data = json.dumps({'token' : token, 'valid_to' : int(time.time()) + 60*60})
+    response = requests.post(url = 'https://ucet.iprima.cz/api/session/create', json = {'email' : addon.getSetting('email'), 'password' : addon.getSetting('password'), 'deviceName' : 'Windows Firefox'}, headers = headers)
+    data = json.loads(response.content)
+    if 'accessToken' in data:
+        token = data['accessToken']['value']
+        data = json.dumps({'token' : token, 'valid_to' : int(time.time()) + 7*60*60})
         try:
             with codecs.open(filename, 'w', encoding='utf-8') as file:
                 file.write('%s\n' % data)

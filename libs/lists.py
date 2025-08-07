@@ -191,15 +191,23 @@ def list_strip(label, stripId, strip_filter = None):
 
 def list_layout(label, layout):
     xbmcplugin.setPluginCategory(_handle, label)
-    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'strip.layout.serve.vdm', 'params' : {'deviceType' : 'WEB', 'layout' : layout, 'profileId' : get_profile_id()}}
+    layout = layout.split('__')
+    pageSlug = layout[0]
+    userLevel = layout[1]
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'layout.layout.serve', 'params' : {'deviceType' : 'WEB', 'pageSlug' : pageSlug, 'userLevel' : userLevel}}
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
     if 'result' not in data or 'data' not in data['result']:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
+        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadůx', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
-        for strip in data['result']['data']:
-            if strip['type'] == 'strip' and strip['stripData']['layoutType'] in ['portraitStrip', 'landscapeStrip']:
+        for strip in data['result']['data']['layoutBlocks']:
+            if strip['stripData']['stripType'] in ['defaultStrip', 'bannerStrip', 'genreStrip']:
+                print(strip)
+                if strip['stripData']['recombeeDataSource'] is not None and 'scenario' in strip['stripData']['recombeeDataSource']:
+                    recombeeScenarioId = strip['stripData']['recombeeDataSource']['scenario']
+                else:
+                    recombeeScenarioId = ''
                 list_item = xbmcgui.ListItem(label = strip['stripData']['title'])
-                url = get_url(action='list_recombee_strip', label = label + ' / ' + encode(strip['stripData']['title']), recombeeScenarioId = strip['recombeeScenarioId'])  
+                url = get_url(action='list_recombee_strip', label = label + ' / ' + encode(strip['stripData']['title']), recombeeScenarioId = recombeeScenarioId)  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
