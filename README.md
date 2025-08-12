@@ -19,7 +19,4 @@ v1.3.8 (11.6.2025)<br>
 
 v1.3.7 (29.5.2025)<br>
 - oprava řazení epizod<br><br>
-
-v1.3.6 (29.5.2025)<br>
-- řazení epizod u sérií bez sezón<br><br>
 </p>
