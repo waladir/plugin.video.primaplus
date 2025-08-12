@@ -97,7 +97,15 @@ def get_token(reset = False):
             xbmcgui.Dialog().notification('Prima+', 'Chyba uložení session', xbmcgui.NOTIFICATION_ERROR, 5000)
         return token
     else:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba při přihlášení', xbmcgui.NOTIFICATION_ERROR, 5000)
+        if 'statusMessage' in data:
+            if data['statusMessage'] == 'Incorrect credentials':
+                xbmcgui.Dialog().notification('Prima+', 'Chybné přihlašovací údaje', xbmcgui.NOTIFICATION_ERROR, 5000)
+            elif data['statusMessage'] == 'User not found':
+                xbmcgui.Dialog().notification('Prima+', 'Uživatel nenalezen', xbmcgui.NOTIFICATION_ERROR, 5000)
+            else:
+                xbmcgui.Dialog().notification('Prima+', 'Chyba při přihlášení', xbmcgui.NOTIFICATION_ERROR, 5000)
+        else:
+            xbmcgui.Dialog().notification('Prima+', 'Chyba při přihlášení', xbmcgui.NOTIFICATION_ERROR, 5000)
         sys.exit()
 
 def register_device(token):
