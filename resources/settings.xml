@@ -12,4 +12,10 @@
                 <setting label="Nová session" type="action" action="RunPlugin(plugin://plugin.video.primaplus?action=reset_session)"/>    
                 <setting label="Logovat požadavky" type="bool" id="log_requests" default="false"/>
 	</category>
+    <category label="Widevine CDM">
+                <setting label="Zobrazení informací" type="action" action="RunScript(script.module.inputstreamhelper,info)"/>
+                <setting label="Nastavení InputStream Helper" type="action" action="Addon.OpenSettings(script.module.inputstreamhelper)" option="close"/>                              
+                <setting label="(Re)instalovat Widevine CDM" type="action" action="RunScript(script.module.inputstreamhelper,widevine_install)" visible="!system.platform.android"/>  
+                <setting label="Odstranit Widevine CDM..." type="action" action="RunScript(script.module.inputstreamhelper, widevine_remove)" visible="!system.platform.android"/>     
+    </category>    
 </settings>
