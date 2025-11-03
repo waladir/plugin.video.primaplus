@@ -74,6 +74,16 @@ def episodes_dict(episodes):
     return episodes_dict
 
 
+def get_episodes(id):
+    addon = xbmcaddon.Addon()
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.episodes.list.hbbtv', 'params' : {'id' : id, 'deviceType' : 'WEB', 'pager' : {'limit' : 500, 'offset' : 0}, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    if 'result' not in data or 'data' not in data['result'] or 'episodes' not in data['result']['data']:
+        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
+        return []
+    else:
+        return data['result']['data']['episodes']
+
 def list_series(label, slug):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
@@ -95,7 +105,7 @@ def list_series(label, slug):
             else:
                 reversed = True
             for season in seasons:
-                episodes = episodes_dict(list(season['episodes']))
+                episodes = episodes_dict(list(get_episodes(season['id'])))
                 for id in sorted(episodes.keys(), reverse = reversed):
                     get_list_item(episodes[id])
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
@@ -119,7 +129,7 @@ def list_season(label, slug, season):
         seasons = data['result']['data']['title']['seasons']
         for season in seasons:
             if season['id'] == current_season:
-                episodes = episodes_dict(list(season['episodes']))
+                episodes = episodes_dict(list(get_episodes(season['id'])))
                 for id in sorted(episodes.keys(), reverse = reversed):
                     get_list_item(episodes[id])
                 xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    

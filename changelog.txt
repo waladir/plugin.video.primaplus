@@ -1,3 +1,6 @@
+v1.4.4 (3.11.2025)
+- úprava načítání epizod
+
 v1.4.3 (29.9.2025)
 - přidání InputStream Helperu do nastavení
 
@@ -9,6 +12,3 @@ v1.4.1 (7.8.2025)
 
 v1.4.0 (7.8.2025)
 - změny v API Prima+
-
-v1.3.8 (11.6.2025)
-- řešení různých epizod se stejným číslem epizody
