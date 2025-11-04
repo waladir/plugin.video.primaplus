@@ -16,7 +16,7 @@ except ImportError:
 
 from libs.api import get_token, call_api
 from libs.lists import get_list_item
-from libs.profiles import get_profile_id
+from libs.profiles import get_profile_id, get_subscription
 from libs.utils import get_url, plugin_id,view_modes
 
 _handle = int(sys.argv[1])
@@ -38,6 +38,7 @@ def program_search(query, label):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
+    subscription = get_subscription()
     if query == '-----':
         input = xbmc.Keyboard('', 'Hledat')
         input.doModal()
@@ -62,7 +63,7 @@ def program_search(query, label):
         items += data['result']['data']['episode']
     if len(items) > 0:
         for item in items:
-            get_list_item(item)
+            get_list_item(item, subscription)
         xbmcplugin.endOfDirectory(_handle,cacheToDisc = False)
         xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
     else:

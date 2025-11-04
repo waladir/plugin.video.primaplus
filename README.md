@@ -5,6 +5,9 @@
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
 
+v1.4.5 (3.11.2025)<br>
+- úpravy na základě změn v datech pořadů<br><br>
+
 v1.4.4 (3.11.2025)<br>
 - úprava načítání epizod<br><br>
 
@@ -16,7 +19,4 @@ v1.4.2 (12.8.2025)<br>
 
 v1.4.1 (7.8.2025)<br>
 - změny v API Prima+ II.<br><br>
-
-v1.4.0 (7.8.2025)<br>
-- změny v API Prima+<br><br>
 </p>

@@ -19,9 +19,15 @@ from libs.utils import get_url, plugin_id, encode, view_modes, get_recombee_url
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
 
-def get_list_item(item, favourite = False):
+def get_lock(distributions, subscription):
+    for dist in distributions:
+        if dist['userLevel'] == subscription:
+            return dist['showLock']
+    return False
+    
+def get_list_item(item, subscription, favourite = False):
     list_item = None
-    if item['type'] in ['movie', 'episode'] and item['distribution']['showLock'] == False:
+    if item['type'] in ['movie', 'episode'] and get_lock(item['distributions'], subscription) == False:
         date = ''
         if item['additionals']['broadcastDateTime'] is not None:
             split_date = item['additionals']['broadcastDateTime'][:10].split('-')
@@ -88,6 +94,7 @@ def list_series(label, slug):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
+    subscription = get_subscription()
     post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
     if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
@@ -107,16 +114,16 @@ def list_series(label, slug):
             for season in seasons:
                 episodes = episodes_dict(list(get_episodes(season['id'])))
                 for id in sorted(episodes.keys(), reverse = reversed):
-                    get_list_item(episodes[id])
+                    get_list_item(episodes[id], subscription)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
-
 
 def list_season(label, slug, season):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
     current_season = season
+    subscription = get_subscription()
     post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
     if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
@@ -131,7 +138,7 @@ def list_season(label, slug, season):
             if season['id'] == current_season:
                 episodes = episodes_dict(list(get_episodes(season['id'])))
                 for id in sorted(episodes.keys(), reverse = reversed):
-                    get_list_item(episodes[id])
+                    get_list_item(episodes[id], subscription)
                 xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
         xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
@@ -142,6 +149,7 @@ def list_recombee_strip(label, recombeeScenarioId, recombee_filter):
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
     items = []
+    subscription = get_subscription()
     post = {"cascadeCreate":True,"returnProperties":True,"includedProperties":["xFrontendMetadata"],"expertSettings":{"returnedInteractionTypes":["viewPortion","purchase"]},"scenario":recombeeScenarioId,"count":70,"filter":"'type' in {\"movie\", \"series\", \"episode\"}" + recombee_filter}
     data = call_api(url = get_recombee_url(), data = post, token = get_token())
     if 'recomms' not in data:    
@@ -154,8 +162,8 @@ def list_recombee_strip(label, recombeeScenarioId, recombee_filter):
     if addon.getSetting('order') == 'podle abecedy':                
         items = sorted(items, key=lambda d: d['title']) 
     for item in items:
-        if item['type'] in ['movie', 'series', 'episode'] and item['distribution']['showLock'] == False:
-            get_list_item(item)
+        if item['type'] in ['movie', 'series', 'episode'] and get_lock(item['distributions'], subscription) == False:
+            get_list_item(item, subscription)
     xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
     xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 

@@ -15,6 +15,7 @@ import codecs
 import json
 
 from libs.lists import get_list_item
+from libs.profiles import get_subscription
 
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
@@ -72,6 +73,7 @@ def get_favourites():
 def list_favourites(label):
     xbmcplugin.setPluginCategory(_handle, label)
     favourites = get_favourites()
+    subscription = get_subscription()
     for item in favourites:
-        get_list_item(item, True)
+        get_list_item(item, subscription, True)
     xbmcplugin.endOfDirectory(_handle)        
