@@ -90,21 +90,31 @@ def get_episodes(id):
     else:
         return data['result']['data']['episodes']
 
+def get_seasons(id):
+    addon = xbmcaddon.Addon()
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.season.list.hbbtv', 'params' : {'id' : id, 'deviceType' : 'WEB', 'pager' : {'limit' : 500, 'offset' : 0}, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    if 'result' not in data or 'data' not in data['result']:
+        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
+        return []
+    else:
+        return list(reversed(data['result']['data']))
+
 def list_series(label, slug):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
     subscription = get_subscription()
-    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title.hbbtv', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
     data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
     if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
-        seasons = data['result']['data']['title']['seasons']
+        seasons = get_seasons(data['result']['data']['title']['id'])
         if len(seasons) > 1:
             for season in seasons:
-                list_item = xbmcgui.ListItem(label = season['title'])
-                url = get_url(action='list_season', label = label + ' / ' + encode(season['title']), slug = slug, season = season['id'])  
+                list_item = xbmcgui.ListItem(label = str(season['seasonNumber']) + '. série')
+                url = get_url(action='list_season', label = label + ' / ' + encode(str(season['seasonNumber']) + '. série'), slug = slug, season = season['id'])  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         else:
             if addon.getSetting('episodes_order') == 'od nejstarších':
@@ -122,25 +132,16 @@ def list_season(label, slug, season):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
-    current_season = season
     subscription = get_subscription()
-    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
-    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
-    if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
+    if addon.getSetting('episodes_order') == 'od nejstarších':
+        reversed = False
     else:
-        if addon.getSetting('episodes_order') == 'od nejstarších':
-            reversed = False
-        else:
-            reversed = True
-        seasons = data['result']['data']['title']['seasons']
-        for season in seasons:
-            if season['id'] == current_season:
-                episodes = episodes_dict(list(get_episodes(season['id'])))
-                for id in sorted(episodes.keys(), reverse = reversed):
-                    get_list_item(episodes[id], subscription)
-                xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
-        xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
+        reversed = True
+    episodes = episodes_dict(list(get_episodes(season)))
+    for id in sorted(episodes.keys(), reverse = reversed):
+        get_list_item(episodes[id], subscription)
+    xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
+    xbmc.executebuiltin('Container.SetViewMode(' + view_modes[addon.getSetting('viewmode')] + ')')
 
 def list_recombee_strip(label, recombeeScenarioId, recombee_filter):
     if recombee_filter == 'none':
