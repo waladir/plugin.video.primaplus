@@ -1,9 +1,10 @@
-﻿<addon id="plugin.video.primaplus" name="Prima+" provider-name="waladir" version="1.4.6">
+﻿<addon id="plugin.video.primaplus" name="Prima+" provider-name="waladir" version="1.4.7">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.requests" version="2.18.4"/>
     <import addon="script.module.beautifulsoup4" version="4.6.0"/>
     <import addon="script.module.inputstreamhelper" version="0.2.0"/>
+    <import addon="inputstream.adaptive"/>
   </requires>
   <extension library="main.py" point="xbmc.python.pluginsource">
     <provides>video</provides>
@@ -17,6 +18,9 @@ Další informace a podporu najdete na fóru www.xbmc-kodi.cz (https://www.xbmc-
     </description>    
     <platform>all</platform>
     <news>
+v1.4.7 (18.12.2025)
+- přidání InputStream Adaptive do závislostí
+
 v1.4.6 (7.11.2025)
 - úpravy načítání sezón
 
@@ -28,9 +32,6 @@ v1.4.4 (3.11.2025)
 
 v1.4.3 (29.9.2025)
 - přidání InputStream Helperu do nastavení
-
-v1.4.2 (12.8.2025)
-- ošetření některých chyb při přihlášení
     </news>
     <assets>
         <icon>icon.png</icon>

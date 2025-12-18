@@ -1,3 +1,6 @@
+v1.4.7 (18.12.2025)
+- přidání InputStream Adaptive do závislostí
+
 v1.4.6 (7.11.2025)
 - úpravy načítání sezón
 
@@ -9,6 +12,3 @@ v1.4.4 (3.11.2025)
 
 v1.4.3 (29.9.2025)
 - přidání InputStream Helperu do nastavení
-
-v1.4.2 (12.8.2025)
-- ošetření některých chyb při přihlášení
