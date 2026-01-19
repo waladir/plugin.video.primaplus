@@ -11,7 +11,7 @@ import time
 from libs.api import call_api, get_token
 from libs.profiles import get_profile_id
 from libs.epg import get_epg_channel, epg_listitem
-from libs.utils import get_url, day_translation, day_translation_short, encode
+from libs.utils import get_url, day_translation, day_translation_short, encode, get_utc_offset
 
 if len(sys.argv) > 1:
     _handle = int(sys.argv[1])
@@ -67,8 +67,8 @@ def list_program(label, channel, day_min):
     for item in epg:
         start_date = datetime.today() + timedelta(days = -1 * int(day_min))
         start_date_ts = int(time.mktime(datetime(start_date.year, start_date.month, start_date.day).timetuple()))
-        startTime = time.mktime(time.strptime(item['programStartTime'][:-6], '%Y-%m-%dT%H:%M:%S')) + 7200
-        endTime = time.mktime(time.strptime(item['programEndTime'][:-6], '%Y-%m-%dT%H:%M:%S')) + 7200
+        startTime = time.mktime(time.strptime(item['programStartTime'][:-6], '%Y-%m-%dT%H:%M:%S')) + get_utc_offset()
+        endTime = time.mktime(time.strptime(item['programEndTime'][:-6], '%Y-%m-%dT%H:%M:%S')) + get_utc_offset()
         if int(endTime) >= start_date_ts and int(endTime) < start_date_ts + 60*60*24:
             if 'playId' in item and item['playId'] is not None and 'playId' and 'isPlayable' in item and item['isPlayable'] == True:
                 list_item = xbmcgui.ListItem(label = day_translation_short[datetime.fromtimestamp(startTime).strftime('%w')] + ' ' + datetime.fromtimestamp(startTime).strftime('%d.%m %H:%M') + ' - ' + datetime.fromtimestamp(endTime).strftime('%H:%M') + ' | ' + encode(item['title']))

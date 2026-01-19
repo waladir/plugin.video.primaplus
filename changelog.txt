@@ -1,3 +1,6 @@
+v1.4.8 (19.1.2026)
+- oprava časů v archivu
+
 v1.4.7 (18.12.2025)
 - přidání InputStream Adaptive do závislostí
 
@@ -9,6 +12,3 @@ v1.4.5 (3.11.2025)
 
 v1.4.4 (3.11.2025)
 - úprava načítání epizod
-
-v1.4.3 (29.9.2025)
-- přidání InputStream Helperu do nastavení

@@ -5,6 +5,9 @@
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
 
+v1.4.8 (19.1.2026)<br>
+- oprava časů v archivu<br><br>
+
 v1.4.7 (18.12.2025)<br>
 - přidání InputStream Adaptive do závislostí<br><br>
 
@@ -16,7 +19,4 @@ v1.4.5 (3.11.2025)<br>
 
 v1.4.4 (3.11.2025)<br>
 - úprava načítání epizod<br><br>
-
-v1.4.3 (29.9.2025)<br>
-- přidání InputStream Helperu do nastavení<br><br>
 </p>

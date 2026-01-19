@@ -54,3 +54,12 @@ def get_recombee_url():
     uri = '/ftv-prima-cross-domain/recomms/users/' + profile_id + '/items/?frontend_timestamp=' + str(int(time.time()+10))
     url = base_url + uri + '&frontend_sign=' + hmac_sign(uri)
     return url
+
+def get_utc_offset():
+    if PY2:
+        from datetime import datetime
+        import time
+        return int(time.mktime(datetime.now().timetuple())-time.mktime(datetime.utcnow().timetuple()))
+    else:
+        from datetime import datetime, timezone
+        return int(datetime.now(timezone.utc).astimezone().utcoffset().total_seconds())
