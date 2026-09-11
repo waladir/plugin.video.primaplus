@@ -60,7 +60,7 @@ def list_program(label, channel, day_min):
         list_item = xbmcgui.ListItem(label='Předchozí den')
         day = date.today() - timedelta(days = int(day_min) + 1)
         den_label = day_translation_short[day.strftime('%w')] + ' ' + day.strftime('%d.%m')
-        url = get_url(action='list_program', channel = channel, day_min = int(day_min) + 1, label = label.rsplit(' / ')[0] + ' / ' + encode(den_label))
+        url = get_url(action='list_program', channel = channel, day_min = int(day_min) + 1, label = label.rsplit(' / ')[0] + ' / ' + den_label)
         list_item.setArt({ 'thumb' : os.path.join(icons_dir , 'previous_arrow.png'), 'icon' : os.path.join(icons_dir , 'previous_arrow.png') })
         xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
 

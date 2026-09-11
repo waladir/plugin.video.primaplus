@@ -114,7 +114,7 @@ def list_series(label, slug):
         if len(seasons) > 1:
             for season in seasons:
                 list_item = xbmcgui.ListItem(label = str(season['seasonNumber']) + '. série')
-                url = get_url(action='list_season', label = label + ' / ' + encode(str(season['seasonNumber']) + '. série'), slug = slug, season = season['id'])  
+                url = get_url(action='list_season', label = label + ' / ' + str(season['seasonNumber']) + '. série', slug = slug, season = season['id'])  
                 xbmcplugin.addDirectoryItem(_handle, url, list_item, True)
         else:
             if addon.getSetting('episodes_order') == 'od nejstarších':
