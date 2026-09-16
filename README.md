@@ -5,6 +5,9 @@
 Pro fungování doplňku je potřeba mít registraci s minimálně Free tarifem na www.iprima.cz.<br><br>
 <a href="https://www.xbmc-kodi.cz/prima-+">Vlákno na fóru XBMC-Kodi.cz</a><br><br>
 
+v1.5.0 (16.9.2026)<br>
+- přepracování práce se zařízeními<br><br>
+
 v1.4.9 (11.9.2026)<br>
 - oprava labelu pro Kodi 18<br><br>
 
@@ -16,7 +19,4 @@ v1.4.7 (18.12.2025)<br>
 
 v1.4.6 (7.11.2025)<br>
 - úpravy načítání sezón<br><br>
-
-v1.4.5 (3.11.2025)<br>
-- úpravy na základě změn v datech pořadů<br><br>
 </p>
