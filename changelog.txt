@@ -1,3 +1,6 @@
+v1.5.1 (17.9.2026)
+- oprava příhlášení
+
 v1.5.0 (16.9.2026)
 - přepracování práce se zařízeními
 
@@ -9,6 +12,3 @@ v1.4.8 (19.1.2026)
 
 v1.4.7 (18.12.2025)
 - přidání InputStream Adaptive do závislostí
-
-v1.4.6 (7.11.2025)
-- úpravy načítání sezón
