@@ -110,15 +110,37 @@ def reset_profiles():
     xbmcgui.Dialog().notification('Prima+', 'Profily byly znovu načtené', xbmcgui.NOTIFICATION_INFO, 5000)    
     xbmc.executebuiltin('Container.Refresh')
 
-def get_subscription():
-    data = call_api(url = 'https://api.play-backend.iprima.cz/api/v1/user/sub/active', data = None, token = get_token(), skip_profile = True)
-    if 'err' in data:
-        xbmcgui.Dialog().notification('Prima+', 'Chyba při načtení profilů', xbmcgui.NOTIFICATION_ERROR, 5000)
+def get_subscription(reset = False):
+    addon = xbmcaddon.Addon()
+    addon_userdata_dir = translatePath(addon.getAddonInfo('profile'))
+    filename = os.path.join(addon_userdata_dir, 'subscription.txt')        
+    if reset == False:
+        data = None
+        try:
+            with codecs.open(filename, 'r', encoding='utf-8') as file:
+                for row in file:
+                    if len(row) > 0:
+                        data = row
+        except IOError as error:
+            if error.errno != 2:
+                xbmcgui.Dialog().notification('Prima+', 'Chyba při načtení tarifu', xbmcgui.NOTIFICATION_ERROR, 5000)
+                sys.exit()
+        if data is not None:
+            return data
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'subscription.userState.subscriptionDetail', 'params' : {'_accessToken' : get_token()}}        
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    if 'err' in data or 'result' not in data:
+        xbmcgui.Dialog().notification('Prima+', 'Chyba při zjištění tarifu', xbmcgui.NOTIFICATION_ERROR, 5000)
         sys.exit()
     subscription = 'free'
-    for sub in data:
-        if sub['subPackage'] == 'HVOD':
-            subscription = 'light'
-        elif sub ['subPackage'] == 'SVOD':
-            subscription = 'premium'
+    if 'tariff' in data['result']['data'] and data['result']['data']['tariff'] is not None:
+        subscription = data['result']['data']['tariff'].lower()
+    if subscription not in ['free', 'light', 'premium']:
+        subscription = 'free'
+    try:
+        with codecs.open(filename, 'w', encoding='utf-8') as file:
+            file.write('%s' % subscription)        
+    except IOError as error:
+        xbmcgui.Dialog().notification('Prima+', 'Chyba při uložení tatifu', xbmcgui.NOTIFICATION_ERROR, 5000)        
+        sys.exit()
     return subscription

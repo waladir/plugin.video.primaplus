@@ -1,3 +1,6 @@
+v1.5.2 (18.9.2026)
+- úprava a optimalizace načítání tarifu
+
 v1.5.1 (17.9.2026)
 - oprava příhlášení
 
@@ -9,6 +12,3 @@ v1.4.9 (11.9.2026)
 
 v1.4.8 (19.1.2026)
 - oprava časů v archivu
-
-v1.4.7 (18.12.2025)
-- přidání InputStream Adaptive do závislostí
