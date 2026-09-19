@@ -110,7 +110,7 @@ def reset_profiles():
     xbmcgui.Dialog().notification('Prima+', 'Profily byly znovu načtené', xbmcgui.NOTIFICATION_INFO, 5000)    
     xbmc.executebuiltin('Container.Refresh')
 
-def get_subscription(reset = False):
+def get_subscription(token, reset = False):
     addon = xbmcaddon.Addon()
     addon_userdata_dir = translatePath(addon.getAddonInfo('profile'))
     filename = os.path.join(addon_userdata_dir, 'subscription.txt')        
@@ -127,8 +127,8 @@ def get_subscription(reset = False):
                 sys.exit()
         if data is not None:
             return data
-    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'subscription.userState.subscriptionDetail', 'params' : {'_accessToken' : get_token()}}        
-    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'subscription.userState.subscriptionDetail', 'params' : {'_accessToken' : token}}        
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = token, skip_profile = True)
     if 'err' in data or 'result' not in data:
         xbmcgui.Dialog().notification('Prima+', 'Chyba při zjištění tarifu', xbmcgui.NOTIFICATION_ERROR, 5000)
         sys.exit()

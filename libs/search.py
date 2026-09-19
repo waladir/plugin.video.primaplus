@@ -38,6 +38,7 @@ def program_search(query, label):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
+    token = get_token()
     subscription = get_subscription()
     if query == '-----':
         input = xbmc.Keyboard('', 'Hledat')
@@ -50,8 +51,8 @@ def program_search(query, label):
             return   
         else:
             save_search_history(query)
-    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'search.search.search', 'params' : {'term' : query, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
-    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'search.search.search', 'params' : {'term' : query, 'profileId' : get_profile_id(), '_accessToken' : token, 'deviceId' : addon.getSetting('deviceid')}}        
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = token)
     if 'result' not in data or 'data' not in data['result']:
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
     items = []

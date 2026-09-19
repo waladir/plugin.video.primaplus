@@ -104,9 +104,10 @@ def list_series(label, slug):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
-    subscription = get_subscription()
+    token = get_token()
+    subscription = get_subscription(token)
     post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.title.hbbtv', 'params' : {'deviceType' : 'WEB', 'slug' : slug, 'limit' : 200, 'profileId' : get_profile_id(), '_accessToken' : get_token(), 'deviceId' : addon.getSetting('deviceid')}}        
-    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = token)
     if 'result' not in data or 'data' not in data['result'] or 'title' not in data['result']['data'] or 'seasons' not in data['result']['data']['title']:
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
@@ -132,7 +133,7 @@ def list_season(label, slug, season):
     addon = xbmcaddon.Addon()
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
-    subscription = get_subscription()
+    subscription = get_subscription(get_token())
     if addon.getSetting('episodes_order') == 'od nejstarších':
         reversed = False
     else:
@@ -150,9 +151,10 @@ def list_recombee_strip(label, recombeeScenarioId, recombee_filter):
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
     items = []
-    subscription = get_subscription()
+    token = get_token()
+    subscription = get_subscription(token)
     post = {"cascadeCreate":True,"returnProperties":True,"includedProperties":["xFrontendMetadata"],"expertSettings":{"returnedInteractionTypes":["viewPortion","purchase"]},"scenario":recombeeScenarioId,"count":70,"filter":"'type' in {\"movie\", \"series\", \"episode\"}" + recombee_filter}
-    data = call_api(url = get_recombee_url(), data = post, token = get_token())
+    data = call_api(url = get_recombee_url(), data = post, token = token)
     if 'recomms' not in data:    
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení pořadů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:
@@ -187,10 +189,11 @@ def list_layout(label, layout, recombee_filter = 'none'):
         xbmcplugin.endOfDirectory(_handle, cacheToDisc = True)    
 
 def list_genres(label):
-    subscription = get_subscription()
+    token = get_token()
+    subscription = get_subscription(token)
     xbmcplugin.setPluginCategory(_handle, label)
     post = {'id' : '1', 'jsonrpc' : '2.0', 'method' : 'vdm.frontend.genre.list', 'params' : {}}
-    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = get_token())
+    data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = token)
     if 'result' not in data or 'data' not in data['result']:
         xbmcgui.Dialog().notification('Prima+', 'Chyba načtení žánrů', xbmcgui.NOTIFICATION_ERROR, 5000)
     else:

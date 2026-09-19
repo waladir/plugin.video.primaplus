@@ -98,7 +98,7 @@ def get_token(reset = False):
         except IOError:
             xbmcgui.Dialog().notification('Prima+', 'Chyba uložení session', xbmcgui.NOTIFICATION_ERROR, 5000)
         from libs.profiles import get_subscription
-        get_subscription(reset = True)
+        get_subscription(token, reset = True)
         return token
     else:
         if 'statusMessage' in data:

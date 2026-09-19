@@ -24,7 +24,8 @@ from libs.search import list_search, delete_search, program_search
 from libs.favourites import list_favourites, add_favourite, remove_favourite
 from libs.utils import get_url, ua, PY2
 
-subscription = get_subscription()
+token = get_token()
+subscription = get_subscription(token)
 LAYOUTS = {'Filmy' : 'categoryMovie__' + subscription, 'Seriály' : 'categorySeries__' + subscription, 'Děti' : 'kids__' + subscription, 'Novinky' : 'categoryNewReleases__' + subscription}
 
 if len(sys.argv) > 1:
