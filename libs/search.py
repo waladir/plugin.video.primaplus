@@ -39,7 +39,7 @@ def program_search(query, label):
     xbmcplugin.setPluginCategory(_handle, label)
     xbmcplugin.setContent(_handle, 'movies')
     token = get_token()
-    subscription = get_subscription()
+    subscription = get_subscription(token)
     if query == '-----':
         input = xbmc.Keyboard('', 'Hledat')
         input.doModal()

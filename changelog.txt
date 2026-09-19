@@ -1,3 +1,6 @@
+v1.5.4 (19.9.2026)
+- oprava chyby při vyhledávání
+
 v1.5.3 (19.9.2026)
 - oprava přihlášení
 
@@ -9,6 +12,3 @@ v1.5.1 (17.9.2026)
 
 v1.5.0 (16.9.2026)
 - přepracování práce se zařízeními
-
-v1.4.9 (11.9.2026)
-- oprava labelu pro Kodi 18
