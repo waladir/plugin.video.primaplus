@@ -83,11 +83,11 @@ def get_token(reset = False):
     data = json.loads(response.content)
     if 'accessToken' in data:
         token = data['accessToken']['value']
+        sessionId = data.get('sessionId')
         post = {'id' : 'auth-fe-1', 'jsonrpc' : '2.0', 'method' : 'user.user.session.active.list', 'params' : {'_accessToken' : token}}        
         data = call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = token, skip_profile = True)
         for device in data['result']['data']['data']:
-            created_at = calendar.timegm(time.strptime(device['createdAt'], '%Y-%m-%dT%H:%M:%S+00:00'))
-            if device['deviceName'] == addon.getSetting('deviceid') and created_at < time.time() - 5:
+            if device['deviceName'] == addon.getSetting('deviceid') and device['sessionId'] != sessionId:
                 post = {'id' : 'auth-fe-1', 'jsonrpc' : '2.0', 'method' : 'user.user.session.revoke', 'params' : {'_accessToken' : token, 'revokeType' : 'manual', 'sessionId' : device['sessionId']}}
                 call_api(url = 'https://gateway-api.prod.iprima.cz/json-rpc/', data = post, token = token)
 
